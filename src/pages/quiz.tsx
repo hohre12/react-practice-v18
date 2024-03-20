@@ -19,6 +19,7 @@ const Quiz = () => {
     const quiz: TQuiz = data.results[step - 1]
 
     // store에 들고있어야함
+    // 정답이 뭔지 알아야함. QuizList에 correct 내려주던가 아니면 string[] -> any[]로 바꿔주던가
     const answerList = data.results.map((it:any) => shuffle([it.correct_answer, ...it.incorrect_answers]))
     // 유저 선택 받는 list 만들어서 store로 관리
     // 시간 store로 관리
