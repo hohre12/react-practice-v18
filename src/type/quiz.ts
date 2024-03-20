@@ -18,7 +18,6 @@
 // }
 
 export type TQuizItem = {
-    done?: boolean,
     text?: string,
 }
 

@@ -8,17 +8,11 @@ import { TQuiz } from "../type/quiz"
 
 const Quiz = () => {
     const { data, isLoading, isError } = useQuery(['quizList'], getQuiz)
-    // const [quiz, setQuiz] = useState<TQuiz>()
     const [step, setStep] = useState<number>(1)
-
-    // useEffect(() => {
-    //     console.log(data)
-    //     if(data) setQuiz(data[step - 1])
-    // }, [data, step])
 
     if (isLoading) return <div>Loading...</div>
     if (isError) return <div>Error fetching data</div>
-    
+
     const quiz: TQuiz = data.results[step - 1]
     return <div>
         <h1>퀴즈 페이지</h1>

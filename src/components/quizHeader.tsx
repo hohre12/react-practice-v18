@@ -9,13 +9,13 @@ const QuizHeaderStyled = styled.div`
     border-bottom: 1px solid #e9ecef;
     h1 {
         margin: 0;
-        font-size: 36px;
+        font-size: 24px;
         color: #343a40;
     }
     .day {
         margin-top: 4px;
         color: #868e96;
-        font-size: 21px;
+        font-size: 16px;
     }
     .tasks-left {
         color: #20c997;
@@ -28,7 +28,7 @@ const QuizHeaderStyled = styled.div`
 const QuizHeader = ({category, difficulty, question, type}: TQuizHeader) => {
     console.log(question)
     return <QuizHeaderStyled>
-        <h1>{question}</h1>
+        <h1 dangerouslySetInnerHTML={{__html: question}}></h1>
         <div className="day">{category}</div>
         <div className="tasks-left">{difficulty}</div>
         <div className="tasks-left">{type}</div>

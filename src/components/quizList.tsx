@@ -19,7 +19,7 @@ const QuizList = ({correct_answer, incorrect_answers}: TQuizListItem) => {
     }, [correct_answer, incorrect_answers])
     return <QuizListStyled>
         {
-            answerList?.map(it => <QuizItem text={it}></QuizItem>)
+            answerList?.map((it, idx) => <QuizItem text={it} key={idx}></QuizItem>)
         }
     </QuizListStyled>
 }
