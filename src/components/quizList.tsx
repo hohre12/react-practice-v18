@@ -15,7 +15,7 @@ const QuizListStyled = styled.div`
 const QuizList = ({answers, selectAnswer}: {answers: string[], selectAnswer: (val: string) => void}) => {
     return <QuizListStyled>
         {
-            answers?.map((it, idx) => <QuizItem key={idx} text={it} selectAnswer={selectAnswer}></QuizItem>)
+            answers?.map((it, idx) => <QuizItem key={idx} text={it} isSelect={false} correctAnswer={''} selectAnswer={selectAnswer}></QuizItem>)
         }
     </QuizListStyled>
 }

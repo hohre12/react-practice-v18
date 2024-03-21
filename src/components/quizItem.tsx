@@ -39,8 +39,18 @@ const Text = styled.div<{$done?: boolean}>`
     `}
 `;
 
+type TQuizItem = {
+    text: string,
+    isSelect: boolean,
+    correctAnswer: string,
+    selectAnswer: (val: string) => void,
+}
 
-const QuizItem = ({text, selectAnswer}: {text: string, selectAnswer: (val: string) => void}) => {
+
+const QuizItem = ({text, isSelect, correctAnswer, selectAnswer}: TQuizItem) => {
+    // correctAnswer === text -> 정답
+    // 선택했을때, 정답이면 -> 초록색
+    // 선택했을때, 오답이면 -> 선택한거 빨간색, 정답 초록색
     const [done, setDone] = useState<boolean>(false)
     const handleClick = () => {
         setDone(!done)
@@ -49,6 +59,10 @@ const QuizItem = ({text, selectAnswer}: {text: string, selectAnswer: (val: strin
     useEffect(() => {
         setDone(false)
     }, [text])
+
+    useEffect(() => {
+        if(isSelect) console.log('')
+    }, [isSelect])
     return <QuizItemStyled>
         <CheckCircle $done={done} onClick={handleClick}>{done && <MdDone />}</CheckCircle>
         <Text $done={done}>{text}</Text>
