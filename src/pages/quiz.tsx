@@ -6,15 +6,15 @@ import { useQuery } from "react-query"
 import { getQuiz } from "../services/quiz"
 import { TQuiz } from "../type/quiz"
 import { shuffle } from '../utils/common';
+import { useRecoilState } from "recoil"
+import { answerListState, selectAnswerListState } from "../recoil/atoms/quiz"
 
 const Quiz = () => {
     const { data, isLoading, isError } = useQuery(['quizList'], getQuiz)
-
-    // store에 들고있어야함
     const [step, setStep] = useState<number>(1)
-    const [selectAnswerList, setSelectAnswerList] = useState<string[]>([])
-    const [answerList, setAnswerList] = useState<any[]>([])
-    const [quiz, setQuiz] = useState<TQuiz | null>(null)
+
+    const [answerList, setAnswerList] = useRecoilState(answerListState)
+    const [selectAnswerList, setSelectAnswerList] = useRecoilState(selectAnswerListState)
     const isAnswer = selectAnswerList.length === step
 
     // store에 들고있어야함
@@ -23,30 +23,27 @@ const Quiz = () => {
     useEffect(() => {
         if (data && data.results) {
             const newAnswerList = data.results.map((it: any) => shuffle([it.correct_answer, ...it.incorrect_answers]));
-            setAnswerList(newAnswerList);
+            setAnswerList(newAnswerList); // recoil
         }
-    }, [data])
-
-    useEffect(() => {
-        if (data && data.results) { 
-            setQuiz(data.results[step - 1])
-        }
-    }, [step, data])
+    }, [data, setAnswerList])
 
     if (isLoading) return <div>Loading...</div>
     if (isError) return <div>Error fetching data</div>
-    
-    // 유저 선택 받는 list 만들어서 store로 관리
+
+    const quiz: TQuiz = data.results[step - 1]
     // 시간 store로 관리
 
     const selectAnswer = (val: string) => {
-        setSelectAnswerList([val, ...selectAnswerList])
+        setSelectAnswerList([...selectAnswerList, val]) // recoil
         if(quiz?.correct_answer === val) alert('정답입니다!')
         else alert('오답입니다!')
     }
 
     const goNextStep = () => {
-        if(answerList.length === step) console.log('오답노트로')
+        if(answerList.length === step) {
+            console.log('answerList', answerList)
+            console.log('selectAnswerList', selectAnswerList)
+        }
         else setStep(step + 1)
     }
     return <div>
