@@ -3,6 +3,8 @@ import './App.css';
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/home';
 import Quiz from './pages/quiz';
+import QuizResult from './pages/quizResult';
+import Note from './pages/note';
 import { createGlobalStyle } from 'styled-components';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
@@ -31,6 +33,8 @@ function App() {
             <Routes>
                 <Route path='/' Component={Home} />
                 <Route path='/quiz' Component={Quiz} />
+                <Route path='/quizResult' Component={QuizResult} />
+                <Route path='/note' Component={Note} />
             </Routes>
         </div>
     </QueryClientProvider>

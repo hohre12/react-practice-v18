@@ -7,31 +7,39 @@ import { getQuiz } from "../services/quiz"
 import { TQuiz } from "../type/quiz"
 import { shuffle } from '../utils/common';
 import { useRecoilState } from "recoil"
-import { answerListState, selectAnswerListState } from "../recoil/atoms/quiz"
+import { useNavigate } from "react-router-dom"
+import { answerListState, selectAnswerListState, timeState } from "../recoil/atoms/quiz"
 
 const Quiz = () => {
     const { data, isLoading, isError } = useQuery(['quizList'], getQuiz)
     const [step, setStep] = useState<number>(1)
-
+    
     const [answerList, setAnswerList] = useRecoilState(answerListState)
     const [selectAnswerList, setSelectAnswerList] = useRecoilState(selectAnswerListState)
+    const [time, setTime] = useRecoilState(timeState)
+    
+    const navigate = useNavigate()
     const isAnswer = selectAnswerList.length === step
 
-    // store에 들고있어야함
-    // 정답이 뭔지 알아야함. QuizList에 correct 내려주던가 아니면 string[] -> any[]로 바꿔주던가
-    // const answerList: any[] = data.results.map((it:any) => shuffle([it.correct_answer, ...it.incorrect_answers]))
     useEffect(() => {
-        if (data && data.results) {
-            const newAnswerList = data.results.map((it: any) => shuffle([it.correct_answer, ...it.incorrect_answers]));
+        if (data) {
+            const newAnswerList = data.map((it: any) => shuffle([it.correct_answer, ...it.incorrect_answers]));
             setAnswerList(newAnswerList); // recoil
         }
     }, [data, setAnswerList])
 
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setTime(prevSeconds => prevSeconds + 1)
+        }, 1000)
+
+        return () => clearInterval(interval)
+    }, [setTime])
+
     if (isLoading) return <div>Loading...</div>
     if (isError) return <div>Error fetching data</div>
 
-    const quiz: TQuiz = data.results[step - 1]
-    // 시간 store로 관리
+    const quiz: TQuiz = data[step - 1]
 
     const selectAnswer = (val: string) => {
         setSelectAnswerList([...selectAnswerList, val]) // recoil
@@ -41,14 +49,14 @@ const Quiz = () => {
 
     const goNextStep = () => {
         if(answerList.length === step) {
-            console.log('answerList', answerList)
-            console.log('selectAnswerList', selectAnswerList)
+            navigate('/quizResult')
         }
         else setStep(step + 1)
     }
+
     return <div>
         <h1>퀴즈 페이지</h1>
-        {/* <div>시간</div> */}
+        <div>시간: {time}초</div>
         
         <QuizTemplate>
             {

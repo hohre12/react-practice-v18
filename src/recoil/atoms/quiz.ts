@@ -10,3 +10,8 @@ export const selectAnswerListState = atom<string[]>({
     default: []
 })
 
+export const timeState = atom<number>({
+    key: 'timeState',
+    default: 0
+})
+
