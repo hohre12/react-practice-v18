@@ -17,10 +17,6 @@
 // 	options?: [string]
 // }
 
-export type TQuizItem = {
-    text?: string,
-}
-
 export type TQuizHeader = {
     category: string,
     difficulty: string,
@@ -28,9 +24,7 @@ export type TQuizHeader = {
     type: string
 }
 
-export type TQuizListItem = {
+export type TQuiz = TQuizHeader & {
     correct_answer: string,
     incorrect_answers: string[]
 }
-
-export type TQuiz = TQuizHeader & TQuizListItem

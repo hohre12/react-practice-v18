@@ -1,7 +1,6 @@
 import styled, { css } from 'styled-components'
-import { TQuizItem } from '../type/quiz';
 import { MdDone } from 'react-icons/md';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const QuizItemStyled = styled.div`
   display: flex;
@@ -41,10 +40,17 @@ const Text = styled.div<{$done?: boolean}>`
 `;
 
 
-const QuizItem = ({text}: TQuizItem) => {
+const QuizItem = ({text, selectAnswer}: {text: string, selectAnswer: (val: string) => void}) => {
     const [done, setDone] = useState<boolean>(false)
+    const handleClick = () => {
+        setDone(!done)
+        selectAnswer(text)
+    }
+    useEffect(() => {
+        setDone(false)
+    }, [text])
     return <QuizItemStyled>
-        <CheckCircle $done={done} onClick={() => setDone(!done)}>{done && <MdDone />}</CheckCircle>
+        <CheckCircle $done={done} onClick={handleClick}>{done && <MdDone />}</CheckCircle>
         <Text $done={done}>{text}</Text>
     </QuizItemStyled>
 }
