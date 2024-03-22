@@ -1,23 +1,19 @@
 import { useRecoilValue } from "recoil"
-import { answerListState, selectAnswerListState, timeState } from "../recoil/atoms/quiz"
-import { useQueryClient } from "react-query"
-import { TQuiz } from "../type/quiz"
+import { quizListState, selectAnswerListState, timeState } from "../recoil/atoms/quiz"
 import { Link } from "react-router-dom"
 
 
 
 const QuizResult = () => {
-    const cache = useQueryClient()
-    const answerList = useRecoilValue(answerListState)
+    const quizList = useRecoilValue(quizListState)
     const selectAnswerList = useRecoilValue(selectAnswerListState)
     const time = useRecoilValue(timeState)
-
-    const data: TQuiz[] = cache.getQueryData(['quizList']) as TQuiz[]
+    
     let rightAnswer: number[] = []
     let wrongAnswer: number[] = []
 
-    for(let i = 0; i < data.length; i++) {
-        if(selectAnswerList[i] === data[i].correct_answer) rightAnswer.push(i)
+    for(let i = 0; i < quizList.length; i++) {
+        if(selectAnswerList[i] === quizList[i].correct_answer) rightAnswer.push(i)
         else wrongAnswer.push(i)
     }
     return <div>

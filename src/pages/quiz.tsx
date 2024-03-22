@@ -1,33 +1,58 @@
-import { useEffect, useState } from "react"
-import QuizTemplate from "../components/quizTemplate"
-import QuizHeader from "../components/quizHeader"
-import QuizList from "../components/quizList"
+import { useCallback, useEffect, useState } from "react"
+import QuizTemplate from "../components/quiz/quizTemplate"
+import QuizHeader from "../components/quiz/quizHeader"
 import { useQuery } from "react-query"
 import { getQuiz } from "../services/quiz"
 import { TQuiz } from "../type/quiz"
 import { shuffle } from '../utils/common';
 import { useRecoilState } from "recoil"
 import { useNavigate } from "react-router-dom"
-import { answerListState, selectAnswerListState, timeState } from "../recoil/atoms/quiz"
+import { answerListState, quizListState, selectAnswerListState, timeState } from "../recoil/atoms/quiz"
+import QuizItem from "../components/quiz/quizItem"
+import { QuizPageStyled, QuizListStyled, LoadingStyled } from "../styles/quiz.style"
+import { SyncLoader } from "react-spinners"
 
 const Quiz = () => {
     const { data, isLoading, isError } = useQuery(['quizList'], getQuiz)
     const [step, setStep] = useState<number>(1)
     
+    const [quizList, setQuizList] = useRecoilState(quizListState)
     const [answerList, setAnswerList] = useRecoilState(answerListState)
     const [selectAnswerList, setSelectAnswerList] = useRecoilState(selectAnswerListState)
     const [time, setTime] = useRecoilState(timeState)
+
+    const isAnswer = selectAnswerList.length === step
+    const quiz: TQuiz = quizList[step - 1]
     
     const navigate = useNavigate()
 
+    const initData = useCallback(() => {
+        localStorage.removeItem('quizStorage')
+        setQuizList(data)
+        const newAnswerList = quizList.map((it: any) => shuffle([it.correct_answer, ...it.incorrect_answers]));
+        setAnswerList(newAnswerList);
+        setSelectAnswerList([])
+        setTime(0)
+    }, [data, setQuizList, quizList, setAnswerList, setSelectAnswerList, setTime])
+
+    const selectAnswerFunc = useCallback((val: string) => {
+        setSelectAnswerList([...selectAnswerList, val]) // recoil
+        if(quiz?.correct_answer === val) alert('정답입니다!')
+        else alert('오답입니다!')
+    }, [quiz, setSelectAnswerList, selectAnswerList])
+
+    const goNextStep = useCallback(() => {
+        if(answerList.length === step) {
+            navigate('/quizResult')
+        }
+        else setStep(step + 1)
+    }, [answerList, navigate, step])
+
     useEffect(() => {
         if (data) {
-            localStorage.removeItem('quizStorage')
-            const newAnswerList = data.map((it: any) => shuffle([it.correct_answer, ...it.incorrect_answers]));
-            setAnswerList(newAnswerList);
-            setSelectAnswerList([])
+            initData()
         }
-    }, [data, setAnswerList, setSelectAnswerList])
+    }, [data, initData])
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -37,44 +62,24 @@ const Quiz = () => {
         return () => clearInterval(interval)
     }, [setTime])
 
-    
+    if (isLoading) return <LoadingStyled><h3>문제 가져오는중...</h3><SyncLoader></SyncLoader></LoadingStyled>
+    if (isError) return <div>에러...</div>
 
-    if (isLoading) return <div>Loading...</div>
-    if (isError) return <div>Error fetching data</div>
-
-    const isAnswer = selectAnswerList.length === step
-    const quiz: TQuiz = data[step - 1]
-    
-    const selectAnswerFunc = (val: string) => {
-        setSelectAnswerList([...selectAnswerList, val]) // recoil
-        if(quiz?.correct_answer === val) alert('정답입니다!')
-        else alert('오답입니다!')
-    }
-
-    const goNextStep = () => {
-        if(answerList.length === step) {
-            navigate('/quizResult')
-        }
-        else setStep(step + 1)
-    }
-
-    return <div>
+    return <QuizPageStyled>
         <h1>퀴즈 페이지</h1>
         <div>시간: {time}초</div>
-        
         <QuizTemplate>
             {
                 quiz && <>
                     <QuizHeader
                         category={quiz.category}
                         difficulty={quiz.difficulty}
-                        question={quiz.question}
-                        type={quiz.type}></QuizHeader>
-                    <QuizList
-                        selectAnswerFunc={selectAnswerFunc}
-                        step={step}
-                        correctAnswer={quiz.correct_answer}
-                        answers={answerList[step - 1]}></QuizList>
+                        question={quiz.question}></QuizHeader>
+                    <QuizListStyled>
+                        {
+                            answerList[step - 1]?.map((it: string, idx: number) => <QuizItem key={idx} text={it} step={step} correctAnswer={quiz.correct_answer} selectAnswerFunc={selectAnswerFunc}></QuizItem>)
+                        }
+                    </QuizListStyled>
                 </>
             }
             {
@@ -85,7 +90,7 @@ const Quiz = () => {
                 </button>
             }
         </QuizTemplate>
-    </div>
+    </QuizPageStyled>
 }
 
 export default Quiz

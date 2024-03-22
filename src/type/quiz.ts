@@ -21,7 +21,6 @@ export type TQuizHeader = {
     category: string,
     difficulty: string,
     question: string,
-    type: string
 }
 
 export type TQuiz = TQuizHeader & {

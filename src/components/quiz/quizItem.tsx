@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 import { MdDone } from 'react-icons/md';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { selectAnswerListState } from '../recoil/atoms/quiz';
+import { selectAnswerListState } from '../../recoil/atoms/quiz';
 
 const QuizItemStyled = styled.div`
   display: flex;
@@ -61,10 +61,10 @@ const QuizItem = ({text, step, correctAnswer, selectAnswerFunc}: TQuizItem) => {
         if(selectAnswerList[step - 1]) {
             if(text === correctAnswer) {
                 setStatus('right')
-            }
-
-            if(text === selectAnswerList[step - 1] && text !== correctAnswer) {
-                setStatus('wrong')
+            } else {
+                if(text === selectAnswerList[step - 1]) {
+                    setStatus('wrong')
+                }
             }
         } else {
             setStatus(null)
