@@ -12,10 +12,17 @@ const QuizListStyled = styled.div`
   background: gray;
 `;
 
-const QuizList = ({answers, selectAnswer}: {answers: string[], selectAnswer: (val: string) => void}) => {
+type TQuizList = {
+    answers: string[],
+    step: number,
+    correctAnswer: string,
+    selectAnswerFunc?: (val: string) => void
+}
+
+const QuizList = ({answers, step, correctAnswer, selectAnswerFunc}: TQuizList) => {
     return <QuizListStyled>
         {
-            answers?.map((it, idx) => <QuizItem key={idx} text={it} isSelect={false} correctAnswer={''} selectAnswer={selectAnswer}></QuizItem>)
+            answers?.map((it, idx) => <QuizItem key={idx} text={it} step={step} correctAnswer={correctAnswer} selectAnswerFunc={selectAnswerFunc}></QuizItem>)
         }
     </QuizListStyled>
 }

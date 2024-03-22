@@ -26,7 +26,6 @@ const QuizHeaderStyled = styled.div`
 `
 
 const QuizHeader = ({category, difficulty, question, type}: TQuizHeader) => {
-    console.log(question)
     return <QuizHeaderStyled>
         <h1 dangerouslySetInnerHTML={{__html: question}}></h1>
         <div className="day">{category}</div>

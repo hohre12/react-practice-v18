@@ -1,6 +1,8 @@
 import styled, { css } from 'styled-components'
 import { MdDone } from 'react-icons/md';
 import { useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import { selectAnswerListState } from '../recoil/atoms/quiz';
 
 const QuizItemStyled = styled.div`
   display: flex;
@@ -9,7 +11,7 @@ const QuizItemStyled = styled.div`
   padding-bottom: 12px;
 `;
 
-const CheckCircle = styled.div<{$done?: boolean}>`
+const CheckCircle = styled.div<{$status?: 'right' | 'wrong' | null}>`
   width: 32px;
   height: 32px;
   border-radius: 16px;
@@ -21,51 +23,56 @@ const CheckCircle = styled.div<{$done?: boolean}>`
   margin-right: 20px;
   cursor: pointer;
   ${props =>
-    props.$done &&
+    props.$status === 'right' &&
     css`
       border: 1px solid #38d9a9;
       color: #38d9a9;
     `}
 `;
 
-const Text = styled.div<{$done?: boolean}>`
+const Text = styled.div<{$status?: 'right' | 'wrong' | null}>`
   flex: 1;
   font-size: 21px;
-  color: #495057;
   ${props =>
-    props.$done &&
+    props.$status === 'right' ?
     css`
       color: #ced4da;
-    `}
+    ` : props.$status === 'wrong' ? css`
+    color: #e00b2b;
+    ` : css`color: #495057`}
 `;
 
 type TQuizItem = {
     text: string,
-    isSelect: boolean,
+    step: number,
     correctAnswer: string,
-    selectAnswer: (val: string) => void,
+    selectAnswerFunc?: (val: string) => void,
 }
 
 
-const QuizItem = ({text, isSelect, correctAnswer, selectAnswer}: TQuizItem) => {
-    // correctAnswer === text -> 정답
-    // 선택했을때, 정답이면 -> 초록색
-    // 선택했을때, 오답이면 -> 선택한거 빨간색, 정답 초록색
-    const [done, setDone] = useState<boolean>(false)
+const QuizItem = ({text, step, correctAnswer, selectAnswerFunc}: TQuizItem) => {
+    const selectAnswerList = useRecoilValue(selectAnswerListState)
+    const [status, setStatus] = useState<'right' | 'wrong' | null>(null)
     const handleClick = () => {
-        setDone(!done)
-        selectAnswer(text)
+        if(selectAnswerFunc) selectAnswerFunc(text)
     }
-    useEffect(() => {
-        setDone(false)
-    }, [text])
 
     useEffect(() => {
-        if(isSelect) console.log('')
-    }, [isSelect])
+        if(selectAnswerList[step - 1]) {
+            if(text === correctAnswer) {
+                setStatus('right')
+            }
+
+            if(text === selectAnswerList[step - 1] && text !== correctAnswer) {
+                setStatus('wrong')
+            }
+        } else {
+            setStatus(null)
+        }
+    }, [selectAnswerList, step, correctAnswer, text])
     return <QuizItemStyled>
-        <CheckCircle $done={done} onClick={handleClick}>{done && <MdDone />}</CheckCircle>
-        <Text $done={done}>{text}</Text>
+        <CheckCircle $status={status} onClick={handleClick}>{status && <MdDone />}</CheckCircle>
+        <Text $status={status}>{text}</Text>
     </QuizItemStyled>
 }
 

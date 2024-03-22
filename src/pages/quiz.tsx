@@ -19,14 +19,15 @@ const Quiz = () => {
     const [time, setTime] = useRecoilState(timeState)
     
     const navigate = useNavigate()
-    const isAnswer = selectAnswerList.length === step
 
     useEffect(() => {
         if (data) {
+            localStorage.removeItem('quizStorage')
             const newAnswerList = data.map((it: any) => shuffle([it.correct_answer, ...it.incorrect_answers]));
-            setAnswerList(newAnswerList); // recoil
+            setAnswerList(newAnswerList);
+            setSelectAnswerList([])
         }
-    }, [data, setAnswerList])
+    }, [data, setAnswerList, setSelectAnswerList])
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -36,12 +37,15 @@ const Quiz = () => {
         return () => clearInterval(interval)
     }, [setTime])
 
+    
+
     if (isLoading) return <div>Loading...</div>
     if (isError) return <div>Error fetching data</div>
 
+    const isAnswer = selectAnswerList.length === step
     const quiz: TQuiz = data[step - 1]
-
-    const selectAnswer = (val: string) => {
+    
+    const selectAnswerFunc = (val: string) => {
         setSelectAnswerList([...selectAnswerList, val]) // recoil
         if(quiz?.correct_answer === val) alert('정답입니다!')
         else alert('오답입니다!')
@@ -67,7 +71,9 @@ const Quiz = () => {
                         question={quiz.question}
                         type={quiz.type}></QuizHeader>
                     <QuizList
-                        selectAnswer={selectAnswer}
+                        selectAnswerFunc={selectAnswerFunc}
+                        step={step}
+                        correctAnswer={quiz.correct_answer}
                         answers={answerList[step - 1]}></QuizList>
                 </>
             }
