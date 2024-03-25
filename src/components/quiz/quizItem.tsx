@@ -9,7 +9,7 @@ const QuizItemStyled = styled.div`
   align-items: center;
   padding-top: 12px;
   padding-bottom: 12px;
-`;
+`
 
 const CheckCircle = styled.div<{$status?: 'right' | 'wrong' | null}>`
   width: 32px;
@@ -28,7 +28,7 @@ const CheckCircle = styled.div<{$status?: 'right' | 'wrong' | null}>`
       border: 1px solid #38d9a9;
       color: #38d9a9;
     `}
-`;
+`
 
 const Text = styled.div<{$status?: 'right' | 'wrong' | null}>`
   flex: 1;
@@ -39,8 +39,9 @@ const Text = styled.div<{$status?: 'right' | 'wrong' | null}>`
       color: #ced4da;
     ` : props.$status === 'wrong' ? css`
     color: #e00b2b;
-    ` : css`color: #495057`}
-`;
+    ` : css`color: #495057`
+    }
+`
 
 type TQuizItem = {
     text: string,

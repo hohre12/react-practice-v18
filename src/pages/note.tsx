@@ -11,14 +11,14 @@ const Note = () => {
     const answerList = useRecoilValue(answerListState)
     return <div>
         {
-            quizList && quizList.map((it, idx) => <QuizTemplate key={idx}>
+            quizList && quizList.map((quiz, idx) => <QuizTemplate key={idx}>
                 <QuizHeader
-                    category={it.category}
-                    difficulty={it.difficulty}
-                    question={it.question}></QuizHeader>
+                    category={quiz.category}
+                    difficulty={quiz.difficulty}
+                    question={quiz.question}></QuizHeader>
                 <QuizListStyled>
                     {
-                        answerList[idx]?.map((itt: string, id: number) => <QuizItem key={id} text={itt} step={idx + 1} correctAnswer={it.correct_answer}></QuizItem>)
+                        answerList[idx]?.map((answer: string, id: number) => <QuizItem key={id} text={answer} step={idx + 1} correctAnswer={quiz.correct_answer}></QuizItem>)
                     }
                 </QuizListStyled>
             </QuizTemplate>)

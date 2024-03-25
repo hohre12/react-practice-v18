@@ -29,7 +29,6 @@ const Quiz = () => {
     }, [quizList, step])
 
     const initData = useCallback(() => {
-        console.log('initDtata???')
         // 캐싱된 데이터가 바뀌면 ( 문제가 바뀌면 ), 
         // 1. quiz 로컬스토리지 초기화
         // 2. 클라 저장소에 data 저장
@@ -54,12 +53,13 @@ const Quiz = () => {
         else alert('오답입니다!')
     }, [quiz, selectAnswerList, setSelectAnswerList])
 
-    const goNextStep = useCallback(() => {
+    // useCallback을 써야하는 이유를 모르겠음.
+    const goNextStep = () => {
         if(answerList.length === step) {
             navigate('/quizResult')
         }
         else setStep(step + 1)
-    }, [answerList, navigate, step])
+    }
 
     useEffect(() => {
         if (data) {

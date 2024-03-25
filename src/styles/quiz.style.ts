@@ -48,7 +48,7 @@ export const QuizHeaderStyled = styled.div`
         font-size: 24px;
         color: #343a40;
     }
-    .day {
+    .category {
         margin-top: 4px;
         color: #868e96;
         font-size: 16px;
