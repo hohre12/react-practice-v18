@@ -1,47 +1,8 @@
-import styled, { css } from 'styled-components'
 import { MdDone } from 'react-icons/md';
 import { memo, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { selectAnswerListState } from '../../recoil/atoms/quiz';
-
-const QuizItemStyled = styled.div`
-  display: flex;
-  align-items: center;
-  padding-top: 12px;
-  padding-bottom: 12px;
-`
-
-const CheckCircle = styled.div<{$status?: 'right' | 'wrong' | null}>`
-  width: 32px;
-  height: 32px;
-  border-radius: 16px;
-  border: 1px solid #ced4da;
-  font-size: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 20px;
-  cursor: pointer;
-  ${props =>
-    props.$status === 'right' &&
-    css`
-      border: 1px solid #38d9a9;
-      color: #38d9a9;
-    `}
-`
-
-const Text = styled.div<{$status?: 'right' | 'wrong' | null}>`
-  flex: 1;
-  font-size: 21px;
-  ${props =>
-    props.$status === 'right' ?
-    css`
-      color: #ced4da;
-    ` : props.$status === 'wrong' ? css`
-    color: #e00b2b;
-    ` : css`color: #495057`
-    }
-`
+import { QuizItemStyled, CheckCircle, Text } from '../../styles/quiz.style';
 
 type TQuizItem = {
     text: string,
@@ -50,15 +11,22 @@ type TQuizItem = {
     selectAnswerFunc?: (val: string) => void,
 }
 
+type TTextStatus = 'right' | 'wrong' | null
 
 const QuizItem = ({text, step, correctAnswer, selectAnswerFunc}: TQuizItem) => {
     const selectAnswerList = useRecoilValue(selectAnswerListState)
-    const [status, setStatus] = useState<'right' | 'wrong' | null>(null)
+    const [status, setStatus] = useState<TTextStatus>(null)
+    
     const handleClick = () => {
         if(selectAnswerFunc) selectAnswerFunc(text)
     }
 
     useEffect(() => {
+        // 사용자 선택 리스트 , 단계 , 정답 , item text가 변할때
+        // 만약, 정답을 체크했으면
+        // 해당 item text가 정답일때 -> right
+        // 해당 item text가 정답이 아니면서, 사용자 선택값이면 -> wrong
+        // 정답을 체크안했으면 style 없음
         if(selectAnswerList[step - 1]) {
             if(text === correctAnswer) {
                 setStatus('right')
@@ -71,6 +39,7 @@ const QuizItem = ({text, step, correctAnswer, selectAnswerFunc}: TQuizItem) => {
             setStatus(null)
         }
     }, [selectAnswerList, step, correctAnswer, text])
+
     return <QuizItemStyled>
         <CheckCircle $status={status} onClick={handleClick}>{status && <MdDone />}</CheckCircle>
         <Text $status={status}>{text}</Text>
