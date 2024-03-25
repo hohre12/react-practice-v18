@@ -29,6 +29,7 @@ const Quiz = () => {
     }, [quizList, step])
 
     const initData = useCallback(() => {
+        console.log('initDtata???')
         // 캐싱된 데이터가 바뀌면 ( 문제가 바뀌면 ), 
         // 1. quiz 로컬스토리지 초기화
         // 2. 클라 저장소에 data 저장
@@ -42,12 +43,16 @@ const Quiz = () => {
         setSelectAnswerList([])
         setTime(0)
     }, [data, setQuizList, quizList, setAnswerList, setSelectAnswerList, setTime])
-    
-    const selectAnswerFunc = (val: string) => {
+
+    // quiz 컴포넌트가 리렌더링 될때마다, 해당 함수의 참조값이 변경되어
+    // quizItem에 props로 전달해줄때 새로운 참조값으로 인식되어서
+    // quizItem이 리렌더링 되었다.
+    // useCallback을 사용하여 함수의 동등성을 유지시켜주고, time증가에 따른 quizItem 리렌더링을 방지한다.
+    const selectAnswerFunc = useCallback((val: string) => {
         setSelectAnswerList([...selectAnswerList, val]) // recoil
         if(quiz?.correct_answer === val) alert('정답입니다!')
         else alert('오답입니다!')
-    }
+    }, [quiz, selectAnswerList, setSelectAnswerList])
 
     const goNextStep = useCallback(() => {
         if(answerList.length === step) {

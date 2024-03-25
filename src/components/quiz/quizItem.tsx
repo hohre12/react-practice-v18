@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 import { MdDone } from 'react-icons/md';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { selectAnswerListState } from '../../recoil/atoms/quiz';
 
@@ -76,4 +76,4 @@ const QuizItem = ({text, step, correctAnswer, selectAnswerFunc}: TQuizItem) => {
     </QuizItemStyled>
 }
 
-export default QuizItem
+export default memo(QuizItem)
