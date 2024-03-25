@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import QuizTemplate from "../components/quiz/quizTemplate"
 import QuizHeader from "../components/quiz/quizHeader"
 import { useQuery } from "react-query"
@@ -23,9 +23,18 @@ const Quiz = () => {
     const [time, setTime] = useRecoilState(timeState)
 
     const isAnswer = selectAnswerList.length === step
-    const quiz: TQuiz = quizList[step - 1]
+    const quiz: TQuiz = useMemo(() => {
+        // quizList와 step가 변경되지않는이상, 메모이제이션 된 값 사용
+        return quizList[step - 1]
+    }, [quizList, step])
 
     const initData = useCallback(() => {
+        // 캐싱된 데이터가 바뀌면 ( 문제가 바뀌면 ), 
+        // 1. quiz 로컬스토리지 초기화
+        // 2. 클라 저장소에 data 저장
+        // 3. 보기 섞은 후 클라 저장소에 list로 저장
+        // 4. 답안 선택 초기화
+        // 5. 시간 초기화
         localStorage.removeItem('quizStorage')
         setQuizList(data)
         const newAnswerList = quizList.map((it: any) => shuffle([it.correct_answer, ...it.incorrect_answers]));
@@ -33,12 +42,12 @@ const Quiz = () => {
         setSelectAnswerList([])
         setTime(0)
     }, [data, setQuizList, quizList, setAnswerList, setSelectAnswerList, setTime])
-
-    const selectAnswerFunc = useCallback((val: string) => {
+    
+    const selectAnswerFunc = (val: string) => {
         setSelectAnswerList([...selectAnswerList, val]) // recoil
         if(quiz?.correct_answer === val) alert('정답입니다!')
         else alert('오답입니다!')
-    }, [quiz, setSelectAnswerList, selectAnswerList])
+    }
 
     const goNextStep = useCallback(() => {
         if(answerList.length === step) {

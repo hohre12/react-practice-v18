@@ -1,6 +1,7 @@
 import { styled } from "styled-components"
 import { TQuizHeader } from "../../type/quiz"
 import { QuizHeaderStyled } from "../../styles/quiz.style"
+import { memo } from "react"
 
 const QuizHeader = ({category, difficulty, question}: TQuizHeader) => {
     return <QuizHeaderStyled>
@@ -10,4 +11,4 @@ const QuizHeader = ({category, difficulty, question}: TQuizHeader) => {
     </QuizHeaderStyled>
 }
 
-export default QuizHeader
+export default memo(QuizHeader)
