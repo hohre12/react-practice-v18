@@ -6,14 +6,15 @@ import { getQuiz } from "../services/quiz"
 import { TQuiz } from "../type/quiz"
 import { shuffle } from '../utils/common';
 import { useRecoilState } from "recoil"
-import { useNavigate } from "react-router-dom"
+// import { useNavigate } from "react-router-dom"
 import { answerListState, quizListState, selectAnswerListState, timeState } from "../recoil/atoms/quiz"
 import QuizItem from "../components/quiz/quizItem"
 import { QuizPageStyled, QuizListStyled, LoadingStyled } from "../styles/quiz.style"
 import { SyncLoader } from "react-spinners"
+import useInternalRouter from "../hooks/useInternalRouter"
 
 const Quiz = () => {
-    const navigate = useNavigate()
+    const router = useInternalRouter()
     const { data, isLoading, isError } = useQuery(['quizList'], getQuiz)
     const [step, setStep] = useState<number>(1)
     
@@ -66,7 +67,7 @@ const Quiz = () => {
     }, [quiz, selectAnswerList, setSelectAnswerList])
 
     // useCallback을 써야하는 이유를 모르겠음.
-    const handleNextStep = () => answerList.length === step ? navigate('/quizResult') : setStep(step + 1)
+    const handleNextStep = () => answerList.length === step ? router.push('quizResult') : setStep(step + 1)
 
     useEffect(() => {
         if (data) initData()
@@ -84,7 +85,7 @@ const Quiz = () => {
     if (isError) return <div>에러...</div>
 
     return <QuizPageStyled>
-        <h1>퀴즈 페이지</h1>
+        <h1 onClick={() => router.replace('.')}>퀴즈 페이지</h1>
         <div>시간: {time}초</div>
         <QuizTemplate>
             {

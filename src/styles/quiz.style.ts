@@ -7,6 +7,7 @@ export const LoadingStyled = styled.div`
 export const QuizPageStyled = styled.div`
     h1 {
         text-align: center;
+        cursor: pointer;
     }
 `
 
