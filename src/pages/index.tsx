@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom"
 import styled from "styled-components"
 
-export const HomeStyled = styled.div`
+export const StartPageStyled = styled.div`
   text-align: center;
   padding-top: 200px;
   a {
@@ -16,11 +16,11 @@ export const HomeStyled = styled.div`
   }
 `;
 
-const Home = () => {
-    return <HomeStyled>
+const StartPage = () => {
+    return <StartPageStyled>
         <h1>테스트 퀴즈문제입니다</h1>
         <Link to='/quiz'>퀴즈풀기</Link>
-    </HomeStyled>
+    </StartPageStyled>
 }
 
-export default Home
+export default StartPage

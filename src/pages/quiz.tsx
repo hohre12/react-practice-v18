@@ -13,6 +13,7 @@ import { QuizPageStyled, QuizListStyled, LoadingStyled } from "../styles/quiz.st
 import { SyncLoader } from "react-spinners"
 
 const Quiz = () => {
+    const navigate = useNavigate()
     const { data, isLoading, isError } = useQuery(['quizList'], getQuiz)
     const [step, setStep] = useState<number>(1)
     
@@ -23,8 +24,6 @@ const Quiz = () => {
 
     const isAnswer = selectAnswerList.length === step
     const quiz: TQuiz = quizList[step - 1]
-    
-    const navigate = useNavigate()
 
     const initData = useCallback(() => {
         localStorage.removeItem('quizStorage')

@@ -1,18 +1,26 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import './App.css';
-import { Routes, Route } from 'react-router-dom';
-import Home from './pages/home';
+import { Routes as ReactRouterRoutes, Route } from 'react-router-dom';
+import StartPage from './pages';
 import Quiz from './pages/quiz';
 import QuizResult from './pages/quizResult';
 import Note from './pages/note';
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle, styled } from 'styled-components';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
-const GlobalStyle = createGlobalStyle`
+const GlobalStyled = createGlobalStyle`
   body {
     background: #e9ecef;
   }
 `;
+
+const LayoutStyled = styled.div`
+    max-width: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    height: auto;
+`
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -28,17 +36,23 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-        <GlobalStyle />
-        <div>
-            <Routes>
-                <Route path='/' Component={Home} />
-                <Route path='/quiz' Component={Quiz} />
-                <Route path='/quizResult' Component={QuizResult} />
-                <Route path='/note' Component={Note} />
-            </Routes>
-        </div>
+        <GlobalStyled />
+        <Layout>
+            <ReactRouterRoutes>
+                <Route path='/' element={<StartPage />} />
+                <Route path='/quiz' Component={Quiz} element={<Quiz />}/>
+                <Route path='/quizResult' element={<QuizResult />}/>
+                <Route path='/note' element={<Note />}/>
+            </ReactRouterRoutes>
+        </Layout>
     </QueryClientProvider>
   );
+}
+
+const Layout = ({ children }: { children: ReactNode }) => {
+    return <LayoutStyled>
+        {children}
+    </LayoutStyled>
 }
 
 export default App;
