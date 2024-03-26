@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom"
-import styled from "styled-components"
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
 
 export const StartPageStyled = styled.div`
   text-align: center;
@@ -17,10 +17,12 @@ export const StartPageStyled = styled.div`
 `;
 
 const StartPage = () => {
-    return <StartPageStyled>
-        <h1>테스트 퀴즈문제입니다</h1>
-        <Link to='/quiz'>퀴즈풀기</Link>
+  return (
+    <StartPageStyled>
+      <h1>테스트 퀴즈문제입니다</h1>
+      <Link to="/quiz">퀴즈풀기</Link>
     </StartPageStyled>
-}
+  );
+};
 
-export default StartPage
+export default StartPage;
