@@ -1,5 +1,6 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import useInternalRouter from '../hooks/useInternalRouter';
 
 export const StartPageStyled = styled.div`
   text-align: center;
@@ -17,10 +18,11 @@ export const StartPageStyled = styled.div`
 `;
 
 const StartPage = () => {
+  const router = useInternalRouter();
   return (
     <StartPageStyled>
       <h1>테스트 퀴즈문제입니다</h1>
-      <Link to="/quiz">퀴즈풀기</Link>
+      <button onClick={() => router.push('quiz')}>퀴즈풀기</button>
     </StartPageStyled>
   );
 };
