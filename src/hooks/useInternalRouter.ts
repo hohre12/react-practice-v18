@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 type RoutePath = `/${string}`;
 
-const useInternalRouter = () => {
+export const useInternalRouter = () => {
   const navigate = useNavigate();
   return useMemo(() => {
     return {
@@ -19,5 +19,3 @@ const useInternalRouter = () => {
     };
   }, [navigate]);
 };
-
-export default useInternalRouter;

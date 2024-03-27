@@ -12,6 +12,16 @@ const queryClient = new QueryClient({
   },
 });
 
+// const Wrapper = ({ children }: { children: ReactNode }, options?: { route: string }) => {
+//   return (
+//     <RecoilRoot>
+//       <MemoryRouter initialEntries={[options?.route ?? '/']}>
+//         <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+//       </MemoryRouter>
+//     </RecoilRoot>
+//   );
+// };
+
 const Wrapper = ({ children }: { children: ReactNode }) => {
   return (
     <RecoilRoot>

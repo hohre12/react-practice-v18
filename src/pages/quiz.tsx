@@ -11,7 +11,7 @@ import { answerListState, quizListState, selectAnswerListState, timeState } from
 import QuizItem from '../components/quiz/quizItem';
 import { QuizPageStyled, QuizListStyled, LoadingStyled } from '../styles/quiz.style';
 import { SyncLoader } from 'react-spinners';
-import useInternalRouter from '../hooks/useInternalRouter';
+import { useInternalRouter } from '../hooks/useInternalRouter';
 
 const Quiz = () => {
   const router = useInternalRouter();

@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import useInternalRouter from '../hooks/useInternalRouter';
+import { useInternalRouter } from '../hooks/useInternalRouter';
 
 export const StartPageStyled = styled.div`
   text-align: center;
