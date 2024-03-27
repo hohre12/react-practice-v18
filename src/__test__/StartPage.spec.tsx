@@ -20,11 +20,9 @@ describe('퀴즈시작 메인 페이지 컴포넌트 테스트', () => {
     await act(async () => {
       await userEvent.click(screen.getByText('퀴즈풀기'));
     });
-    console.log(mockRouterPush.mock);
-    // await waitFor(() => {
-    //   console.log(mockRouterPush.mock);
-    //   //   expect(mockRouterPush.mock.calls[0][0]).toStrictEqual(expect.stringContaining('/quiz'));
-    //   //   expect(expect.stringContaining('/quiz'));
-    // });
+    await waitFor(() => {
+      console.log(mockRouterPush.mock.calls[0][0]);
+      expect(mockRouterPush.mock.calls[0][0]).toStrictEqual(expect.stringContaining('/quiz'));
+    });
   });
 });

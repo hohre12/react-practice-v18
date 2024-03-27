@@ -70,7 +70,7 @@ const Quiz = () => {
   );
 
   // useCallback을 써야하는 이유를 모르겠음.
-  const handleNextStep = () => (answerList.length === step ? router.push('quizResult') : setStep(step + 1));
+  const handleNextStep = () => (answerList.length === step ? router.push('/quizResult') : setStep(step + 1));
 
   useEffect(() => {
     if (data) initData();
@@ -95,7 +95,7 @@ const Quiz = () => {
 
   return (
     <QuizPageStyled>
-      <h1 onClick={() => router.replace('.')}>퀴즈 페이지</h1>
+      <h1 onClick={() => router.replace('/.')}>퀴즈 페이지</h1>
       <div>시간: {time}초</div>
       <QuizTemplate>
         {quiz && (
