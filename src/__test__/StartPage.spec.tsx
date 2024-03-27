@@ -21,7 +21,6 @@ describe('퀴즈시작 메인 페이지 컴포넌트 테스트', () => {
       await userEvent.click(screen.getByText('퀴즈풀기'));
     });
     await waitFor(() => {
-      console.log(mockRouterPush.mock.calls[0][0]);
       expect(mockRouterPush.mock.calls[0][0]).toStrictEqual(expect.stringContaining('/quiz'));
     });
   });
