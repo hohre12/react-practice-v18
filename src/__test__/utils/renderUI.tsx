@@ -12,24 +12,24 @@ const queryClient = new QueryClient({
   },
 });
 
-// const Wrapper = ({ children }: { children: ReactNode }, options?: { route: string }) => {
-//   return (
-//     <RecoilRoot>
-//       <MemoryRouter initialEntries={[options?.route ?? '/']}>
-//         <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-//       </MemoryRouter>
-//     </RecoilRoot>
-//   );
-// };
-
-const Wrapper = ({ children }: { children: ReactNode }) => {
+const Wrapper = ({ children }: { children: ReactNode }, options?: { route: string }) => {
   return (
     <RecoilRoot>
-      <BrowserRouter>
+      <MemoryRouter initialEntries={[options?.route ?? '/']}>
         <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-      </BrowserRouter>
+      </MemoryRouter>
     </RecoilRoot>
   );
 };
+
+// const Wrapper = ({ children }: { children: ReactNode }) => {
+//   return (
+//     <RecoilRoot>
+//       <BrowserRouter>
+//         <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+//       </BrowserRouter>
+//     </RecoilRoot>
+//   );
+// };
 
 export default Wrapper;
