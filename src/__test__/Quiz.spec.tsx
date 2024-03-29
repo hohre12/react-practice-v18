@@ -2,10 +2,13 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import Quiz from '../pages/quiz';
 import Wrapper from './utils/renderUI';
 import { useQuery } from 'react-query';
+import { act } from 'react-dom/test-utils';
+import userEvent from '@testing-library/user-event';
+import { async } from 'q';
 
-// 리팩토링
-// 1. 렌더링 되기전 체크 (isLoading = false)
-// 2. 렌더링 되고난 후 체크 (isLoading = true)
+// TODO - 리팩토링
+// 1. useQuery를 customHook으로 변경 후 리팩토링하기
+// 2. fake Data 파일로 빼기
 
 const mockRouterPush = jest.fn();
 const mockUseQuery = useQuery as jest.Mock<any>;
@@ -130,6 +133,7 @@ describe('퀴즈 페이지 isError', () => {
 describe('퀴즈 페이지 컴포넌트 테스트', () => {
   beforeEach(() => {
     mockUseQuery.mockImplementation(() => ({ isLoading: false, data: fakeMockData }));
+    jest.useFakeTimers();
   });
   afterEach(() => {
     jest.clearAllMocks();
@@ -140,6 +144,14 @@ describe('퀴즈 페이지 컴포넌트 테스트', () => {
   test('Displays Quiz Data', async () => {
     setup();
     expect(await screen.findByText('question1')).toBeInTheDocument();
+  });
+  test('시간 증가', async () => {
+    const { getByText } = setup();
+    expect(getByText('시간: 0초')).toBeInTheDocument();
+    await act(() => {
+      jest.advanceTimersByTime(1000);
+    });
+    expect(getByText('시간: 1초')).toBeInTheDocument();
   });
   test('정답 선택 후, 정답/오답 여부 alert', async () => {
     const { getByTestId } = setup();
@@ -170,20 +182,16 @@ describe('퀴즈 페이지 컴포넌트 테스트', () => {
         // 마지막 문제 선택시 "오답노트로" 버튼이 나타나는지 확인
         const wrongNoteButton = queryByText('오답노트로');
         expect(wrongNoteButton).toBeInTheDocument();
+        await act(async () => {
+          await userEvent.click(screen.getByText('오답노트로'));
+        });
+        await waitFor(() => {
+          expect(mockRouterPush.mock.calls[0][0]).toStrictEqual(expect.stringContaining('/quizResult'));
+        });
       }
     }
   });
-  test('시간 증가', async () => {
-    jest.useFakeTimers();
-    // jest.spyOn(global, 'setInterval');
-    const { getByText } = setup();
-    expect(getByText('시간: 0초')).toBeInTheDocument();
-    jest.advanceTimersByTime(1000);
-    expect(setInterval).toHaveBeenCalledTimes(1);
-    // expect(setInterval).toHaveBeenLastCalledWith(expect.any(setInterval), 1000);
-    expect(getByText('시간: 1초')).toBeInTheDocument();
-  });
-  //   test('오답노트로 버튼 클릭시, QuizResult 페이지로 이동', async () => {
+  //   test('mocking test!!!', async () => {
   //     setup();
   //   });
 });
