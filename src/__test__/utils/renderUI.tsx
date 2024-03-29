@@ -23,14 +23,4 @@ const Wrapper = ({ children }: { children: ReactNode }, options?: { route: strin
   );
 };
 
-// const Wrapper = ({ children }: { children: ReactNode }) => {
-//   return (
-//     <RecoilRoot>
-//       <BrowserRouter>
-//         <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-//       </BrowserRouter>
-//     </RecoilRoot>
-//   );
-// };
-
 export default Wrapper;

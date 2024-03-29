@@ -1,14 +1,12 @@
-import { render, screen, waitFor, renderHook, getByText } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import Quiz from '../pages/quiz';
 import Wrapper from './utils/renderUI';
 import { useQuery } from 'react-query';
-import { RecoilRoot } from 'recoil';
 
 const mockRouterPush = jest.fn();
+const mockUseQuery = useQuery as jest.Mock<any>;
 jest.mock('hooks/useInternalRouter', () => ({ useInternalRouter: () => ({ push: mockRouterPush }) }));
-jest.mock('react-query', () => ({
-  useQuery: jest.fn(),
-}));
+jest.mock('react-query');
 
 const setup = () => {
   return render(<Quiz />, { wrapper: props => Wrapper(props) });
@@ -34,49 +32,41 @@ const fakeMockData = [
 ];
 
 describe('퀴즈 페이지 컴포넌트 테스트', () => {
-  test('퀴즈 리스트 API 호출 결과를 화면에 보여준다', async () => {
-    const mockData = {
-      data: fakeMockData,
-      isLoading: false,
-    };
-    (useQuery as jest.Mock).mockReturnValue(mockData);
-    setup();
-    expect(await screen.findByText('퀴즈 페이지')).toBeInTheDocument();
-    // await waitFor(async () => {
-    //   const headerElement = await screen.findByRole('heading', { name: /퀴즈/i });
-    //   expect(headerElement).toBeInTheDocument();
-    // });
-
-    // const mockQuizList = [
-    //   { id: 1, category: 'test1' },
-    //   { id: 2, category: 'test2' },
-    // ];
-    // const mockUseQuery = jest.fn().mockReturnValue({ data: mockQuizList, isLoading: false, isError: false });
-
-    // const useQueryMock = jest.spyOn(ReactQuery, 'useQuery').mockImplementation();
-    // expect(useQueryMock).toHaveBeenCalledTimes(1);
-
-    // const tempMockData = {
-    //   data: [{ category: 'test' }, { category: 'test2' }],
-    //   isLoading: false,
-    //   isError: null,
-    // };
-
-    // const mockedRemoteFn = jest
-    //   .spyOn(api, 'getQuiz')
-    //   .mockReturnValue(new Promise(res => res([{ category: 'test', correct_answer: 'correct', difficulty: 'hard' }])));
-    // setup();
-    // await waitFor(
-    //   () => {
-    //     expect(screen.getByText('test1')).toBeInTheDocument();
-    //   },
-    //   { timeout: 3000 }
-    // );
-    // expect(mockUseQuery).toHaveBeenCalled();
+  beforeEach(() => {
+    mockUseQuery.mockImplementation(() => ({ isLoading: true }));
   });
-  //   test('정답 선택 후, 정오답 여부 alert', async () => {
-  //     setup();
-  //   });
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+  test('Page Rendering', () => {
+    setup();
+  });
+  test('Displays loading indicator', () => {
+    const { getByText } = setup();
+    expect(getByText(/문제 가져오는중.../i)).toBeVisible();
+  });
+  test('Displays error message', () => {
+    mockUseQuery.mockImplementation(() => ({
+      isLoading: false,
+      isError: true,
+    }));
+    const { getByText } = setup();
+    getByText(/에러.../i);
+  });
+  test('Displays Quiz Data', async () => {
+    mockUseQuery.mockImplementation(() => ({ isLoading: false, data: fakeMockData }));
+    setup();
+    expect(await screen.findByText('question1')).toBeInTheDocument();
+  });
+  test('정답 선택 후, 정답 여부 alert', async () => {
+    // mockUseQuery.mockImplementation(() => ({ isLoading: false, data: fakeMockData }));
+    // const { getByTestId } = setup();
+    // const checkCircle = getByTestId('check-circle');
+    // fireEvent.click(checkCircle);
+  });
+  test('오답 선택 후, 오답 여부 alert', async () => {
+    setup();
+  });
   //   test('정답여부 alert 확인 후, QuizItem 상태 변경 및 다음으로 버튼 노출', async () => {
   //     setup();
   //   });
