@@ -2,7 +2,10 @@ import { render, screen, waitFor, renderHook, getByText } from '@testing-library
 import Quiz from '../pages/quiz';
 import Wrapper from './utils/renderUI';
 import { useQuery } from 'react-query';
+import { RecoilRoot } from 'recoil';
 
+const mockRouterPush = jest.fn();
+jest.mock('hooks/useInternalRouter', () => ({ useInternalRouter: () => ({ push: mockRouterPush }) }));
 jest.mock('react-query', () => ({
   useQuery: jest.fn(),
 }));
@@ -37,13 +40,12 @@ describe('퀴즈 페이지 컴포넌트 테스트', () => {
       isLoading: false,
     };
     (useQuery as jest.Mock).mockReturnValue(mockData);
-
     setup();
-    // expect(await screen.findByText('퀴즈')).toBeInTheDocument();
-    await waitFor(async () => {
-      const headerElement = await screen.findByRole('heading', { name: /문제/i });
-      expect(headerElement).toBeInTheDocument();
-    });
+    expect(await screen.findByText('퀴즈 페이지')).toBeInTheDocument();
+    // await waitFor(async () => {
+    //   const headerElement = await screen.findByRole('heading', { name: /퀴즈/i });
+    //   expect(headerElement).toBeInTheDocument();
+    // });
 
     // const mockQuizList = [
     //   { id: 1, category: 'test1' },
