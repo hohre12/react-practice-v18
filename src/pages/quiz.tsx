@@ -105,6 +105,7 @@ const Quiz = () => {
               {answerList[step - 1]?.map((it: string, idx: number) => (
                 <QuizItem
                   key={idx}
+                  idx={idx}
                   text={it}
                   step={step}
                   correctAnswer={quiz.correct_answer}

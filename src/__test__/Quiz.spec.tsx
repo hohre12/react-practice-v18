@@ -1,12 +1,18 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import Quiz from '../pages/quiz';
 import Wrapper from './utils/renderUI';
 import { useQuery } from 'react-query';
 
+// 리팩토링
+// 1. 렌더링 되기전 체크 (isLoading = false)
+// 2. 렌더링 되고난 후 체크 (isLoading = true)
+
 const mockRouterPush = jest.fn();
 const mockUseQuery = useQuery as jest.Mock<any>;
+const mockAlert = jest.fn();
 jest.mock('hooks/useInternalRouter', () => ({ useInternalRouter: () => ({ push: mockRouterPush }) }));
 jest.mock('react-query');
+window.alert = mockAlert;
 
 const setup = () => {
   return render(<Quiz />, { wrapper: props => Wrapper(props) });
@@ -29,11 +35,101 @@ const fakeMockData = [
     question: 'question2',
     type: 'multiple',
   },
+  {
+    category: 'Entertainment: Television',
+    correct_answer: '6',
+    difficulty: 'hard',
+    incorrect_answers: ['4', '5', '7'],
+    question: 'question3',
+    type: 'multiple',
+  },
+  {
+    category: 'Entertainment: Television',
+    correct_answer: '6',
+    difficulty: 'hard',
+    incorrect_answers: ['4', '5', '7'],
+    question: 'question4',
+    type: 'multiple',
+  },
+  {
+    category: 'Entertainment: Television',
+    correct_answer: '6',
+    difficulty: 'hard',
+    incorrect_answers: ['4', '5', '7'],
+    question: 'question5',
+    type: 'multiple',
+  },
+  {
+    category: 'Entertainment: Television',
+    correct_answer: '6',
+    difficulty: 'hard',
+    incorrect_answers: ['4', '5', '7'],
+    question: 'question6',
+    type: 'multiple',
+  },
+  {
+    category: 'Entertainment: Television',
+    correct_answer: '6',
+    difficulty: 'hard',
+    incorrect_answers: ['4', '5', '7'],
+    question: 'question7',
+    type: 'multiple',
+  },
+  {
+    category: 'Entertainment: Television',
+    correct_answer: '6',
+    difficulty: 'hard',
+    incorrect_answers: ['4', '5', '7'],
+    question: 'question8',
+    type: 'multiple',
+  },
+  {
+    category: 'Entertainment: Television',
+    correct_answer: '6',
+    difficulty: 'hard',
+    incorrect_answers: ['4', '5', '7'],
+    question: 'question9',
+    type: 'multiple',
+  },
+  {
+    category: 'Entertainment: Television',
+    correct_answer: '6',
+    difficulty: 'hard',
+    incorrect_answers: ['4', '5', '7'],
+    question: 'question10',
+    type: 'multiple',
+  },
 ];
+
+describe('퀴즈 페이지 isLoading', () => {
+  beforeEach(() => {
+    mockUseQuery.mockImplementation(() => ({ isLoading: true }));
+  });
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+  test('Displays loading indicator', () => {
+    const { getByText } = setup();
+    expect(getByText(/문제 가져오는중.../i)).toBeVisible();
+  });
+});
+
+describe('퀴즈 페이지 isError', () => {
+  beforeEach(() => {
+    mockUseQuery.mockImplementation(() => ({ isError: true }));
+  });
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+  test('Displays error message', () => {
+    const { getByText } = setup();
+    getByText(/에러.../i);
+  });
+});
 
 describe('퀴즈 페이지 컴포넌트 테스트', () => {
   beforeEach(() => {
-    mockUseQuery.mockImplementation(() => ({ isLoading: true }));
+    mockUseQuery.mockImplementation(() => ({ isLoading: false, data: fakeMockData }));
   });
   afterEach(() => {
     jest.clearAllMocks();
@@ -41,41 +137,52 @@ describe('퀴즈 페이지 컴포넌트 테스트', () => {
   test('Page Rendering', () => {
     setup();
   });
-  test('Displays loading indicator', () => {
-    const { getByText } = setup();
-    expect(getByText(/문제 가져오는중.../i)).toBeVisible();
-  });
-  test('Displays error message', () => {
-    mockUseQuery.mockImplementation(() => ({
-      isLoading: false,
-      isError: true,
-    }));
-    const { getByText } = setup();
-    getByText(/에러.../i);
-  });
   test('Displays Quiz Data', async () => {
-    mockUseQuery.mockImplementation(() => ({ isLoading: false, data: fakeMockData }));
     setup();
     expect(await screen.findByText('question1')).toBeInTheDocument();
   });
-  test('정답 선택 후, 정답 여부 alert', async () => {
-    // mockUseQuery.mockImplementation(() => ({ isLoading: false, data: fakeMockData }));
-    // const { getByTestId } = setup();
-    // const checkCircle = getByTestId('check-circle');
-    // fireEvent.click(checkCircle);
+  test('정답 선택 후, 정답/오답 여부 alert', async () => {
+    const { getByTestId } = setup();
+    const checkCircle = getByTestId('0-check-circle');
+    fireEvent.click(checkCircle);
+    expect(mockAlert).toHaveBeenCalled();
+    const alertText = mockAlert.mock.calls[0][0];
+    expect(alertText).toMatch(/^(정답입니다!|오답입니다!)$/);
   });
-  test('오답 선택 후, 오답 여부 alert', async () => {
-    setup();
+  test('정답여부 alert 확인 후, QuizItem 상태 변경 및 다음으로 버튼 노출', async () => {
+    const { getByTestId, queryByText } = setup();
+    const checkCircle = getByTestId('0-check-circle');
+    expect(queryByText('다음으로')).toBeNull();
+    fireEvent.click(checkCircle);
+    expect(mockAlert).toHaveBeenCalled();
+    expect(queryByText('다음으로')).toBeInTheDocument();
   });
-  //   test('정답여부 alert 확인 후, QuizItem 상태 변경 및 다음으로 버튼 노출', async () => {
-  //     setup();
-  //   });
-  //   test('10문제 다 풀면 다음으로 버튼 텍스트가 오답노트로 버튼 텍스트 변경', async () => {
-  //     setup();
-  //   });
-  //   test('시간 증가', async () => {
-  //     setup();
-  //   });
+  test('10문제 다 풀면 다음으로 버튼 텍스트가 오답노트로 버튼 텍스트 변경', async () => {
+    const { getByTestId, getByText, queryByText } = setup();
+    for (let i = 0; i < 10; i++) {
+      const checkCircle = getByTestId(`0-check-circle`); // 0-check-circle 테스트 아이디를 가진 div를 클릭하여 문제를 푼다고 가정합니다.
+      fireEvent.click(checkCircle);
+      expect(mockAlert).toHaveBeenCalled();
+      if (i !== 9) {
+        const nextButton = getByText('다음으로');
+        fireEvent.click(nextButton);
+      } else {
+        // 마지막 문제 선택시 "오답노트로" 버튼이 나타나는지 확인
+        const wrongNoteButton = queryByText('오답노트로');
+        expect(wrongNoteButton).toBeInTheDocument();
+      }
+    }
+  });
+  test('시간 증가', async () => {
+    jest.useFakeTimers();
+    // jest.spyOn(global, 'setInterval');
+    const { getByText } = setup();
+    expect(getByText('시간: 0초')).toBeInTheDocument();
+    jest.advanceTimersByTime(1000);
+    expect(setInterval).toHaveBeenCalledTimes(1);
+    // expect(setInterval).toHaveBeenLastCalledWith(expect.any(setInterval), 1000);
+    expect(getByText('시간: 1초')).toBeInTheDocument();
+  });
   //   test('오답노트로 버튼 클릭시, QuizResult 페이지로 이동', async () => {
   //     setup();
   //   });

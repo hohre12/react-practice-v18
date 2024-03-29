@@ -5,6 +5,7 @@ import { selectAnswerListState } from '../../recoil/atoms/quiz';
 import { QuizItemStyled, CheckCircle, Text } from '../../styles/quiz.style';
 
 type TQuizItem = {
+  idx: number;
   text: string;
   step: number;
   correctAnswer: string;
@@ -13,7 +14,7 @@ type TQuizItem = {
 
 type TTextStatus = 'right' | 'wrong' | null;
 
-const QuizItem = ({ text, step, correctAnswer, selectAnswerFunc }: TQuizItem) => {
+const QuizItem = ({ idx, text, step, correctAnswer, selectAnswerFunc }: TQuizItem) => {
   const selectAnswerList = useRecoilValue(selectAnswerListState);
   const [status, setStatus] = useState<TTextStatus>(null);
 
@@ -42,7 +43,7 @@ const QuizItem = ({ text, step, correctAnswer, selectAnswerFunc }: TQuizItem) =>
 
   return (
     <QuizItemStyled>
-      <CheckCircle $status={status} onClick={handleClick}>
+      <CheckCircle data-testid={`${idx}-check-circle`} $status={status} onClick={handleClick}>
         {status && <MdDone />}
       </CheckCircle>
       <Text $status={status}>{text}</Text>

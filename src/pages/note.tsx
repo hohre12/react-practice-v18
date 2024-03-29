@@ -15,8 +15,14 @@ const Note = () => {
           <QuizTemplate key={idx}>
             <QuizHeader category={quiz.category} difficulty={quiz.difficulty} question={quiz.question}></QuizHeader>
             <QuizListStyled>
-              {answerList[idx]?.map((answer: string, id: number) => (
-                <QuizItem key={id} text={answer} step={idx + 1} correctAnswer={quiz.correct_answer}></QuizItem>
+              {answerList[idx]?.map((answer: string, answerIdx: number) => (
+                <QuizItem
+                  key={answerIdx}
+                  idx={answerIdx}
+                  text={answer}
+                  step={idx + 1}
+                  correctAnswer={quiz.correct_answer}
+                ></QuizItem>
               ))}
             </QuizListStyled>
           </QuizTemplate>
